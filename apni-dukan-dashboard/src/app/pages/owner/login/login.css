@@ -1,0 +1,349 @@
+/* ═══════════════════════════════════
+   LOGIN PAGE — Netflix Dark Theme
+═══════════════════════════════════ */
+
+.login-wrapper {
+  background: #0a0a0a;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+/* Shutter Container Setup */
+.shutter-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  background: #f3f4f6;
+  border-radius: 16px;
+  margin: 0 auto 15px auto;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), 0 4px 6px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Inside Store Icon (Stays Background) */
+.hidden-store-icon {
+  font-size: 2.5rem;
+  z-index: 1;
+  transform: scale(0.9);
+  animation: popIn 0.5s ease forward 1.2s; /* Shutter खुलने के बाद थोड़ा पॉप होगा */
+}
+
+/* Shutter Metallic Door */
+.shutter-door {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #9ca3af, #6b7280); /* Metallic Gray Shutter */
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 4px solid #4b5563; /* Shutter का निचला हैंडल बार */
+  
+  /* Shutter Roll-up Animation trigger */
+  animation: openShutter 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.5s;
+}
+
+/* Shutter Horizontal Lines/Grooves */
+.shutter-line {
+  width: 100%;
+  height: 2px;
+  background-color: #374151;
+  opacity: 0.3;
+}
+
+/* 🎬 KEYFRAMES FOR SHUTTER OPENING */
+@keyframes openShutter {
+  0% {
+    height: 100%;
+    top: 0;
+  }
+  100% {
+    height: 0%;
+    top: 0;
+    border-bottom-width: 0px;
+    opacity: 0; /* पूरी तरह ऊपर जाकर छिप जाएगा */
+  }
+}
+
+/* Text Fade-in Animation */
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeInText 1s ease forwards 1s;
+}
+
+@keyframes fadeInText {
+  to {
+    opacity: 1;
+  }
+}
+/* Animated Background Circles */
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.08;
+  animation: float 6s ease-in-out infinite;
+}
+
+.circle-1 {
+  width: 400px;
+  height: 400px;
+  background: #E50914;
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.circle-2 {
+  width: 300px;
+  height: 300px;
+  background: #E50914;
+  bottom: -80px;
+  right: -80px;
+  animation-delay: 2s;
+}
+
+.circle-3 {
+  width: 200px;
+  height: 200px;
+  background: #ff6b6b;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+/* Login Card */
+.login-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 24px;
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5),
+              0 0 0 1px rgba(229,9,20,0.1);
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Logo */
+.logo-section { animation: fadeIn 0.6s ease 0.2s both; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.store-icon {
+  font-size: 3.5rem;
+  display: block;
+  margin-bottom: 8px;
+  animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.brand-name {
+  color: #E50914;
+  font-weight: 900;
+  font-size: 1.8rem;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.brand-sub {
+  color: #666;
+  font-size: 0.85rem;
+  margin: 4px 0 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Error Alert */
+.alert-error {
+  background: rgba(229,9,20,0.15);
+  border: 1px solid rgba(229,9,20,0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* Input Fields */
+.input-group-custom {
+  animation: fadeIn 0.6s ease both;
+}
+
+.input-group-custom:nth-child(3) { animation-delay: 0.3s; }
+.input-group-custom:nth-child(4) { animation-delay: 0.4s; }
+
+.input-label {
+  color: #888;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.input-wrapper {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  transition: all 0.3s ease;
+}
+
+.input-wrapper:focus-within {
+  border-color: #E50914;
+  box-shadow: 0 0 0 3px rgba(229,9,20,0.15);
+  background: #0f0f0f;
+}
+
+.input-icon {
+  font-size: 1rem;
+  margin-right: 10px;
+  opacity: 0.7;
+}
+
+.custom-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.95rem;
+  padding: 14px 0;
+  width: 100%;
+}
+
+.custom-input::placeholder { color: #444; }
+
+/* Login Button */
+.btn-login {
+  background: linear-gradient(135deg, #E50914, #b71c1c);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  animation: fadeIn 0.6s ease 0.5s both;
+}
+
+.btn-login:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f40612, #c62828);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(229,9,20,0.4);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-login:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-login.loading {
+  background: linear-gradient(135deg, #b71c1c, #7f0000);
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: fadeIn 0.6s ease 0.6s both;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #2a2a2a;
+}
+
+.divider span {
+  color: #555;
+  font-size: 0.8rem;
+}
+
+/* Customer Button */
+.btn-customer {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 13px;
+  color: #888;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.6s ease 0.7s both;
+}
+
+.btn-customer:hover {
+  border-color: #E50914;
+  color: #E50914;
+  background: rgba(229,9,20,0.05);
+}
+
+/* Footer */
+.footer-text {
+  color: #444;
+  font-size: 0.75rem;
+  animation: fadeIn 0.6s ease 0.8s both;
+}

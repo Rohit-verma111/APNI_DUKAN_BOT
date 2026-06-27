@@ -1,193 +1,347 @@
-<div class="bg-netflix min-vh-100 py-4">
-  <div class="container-fluid px-4">
+<div class="app-wrapper" [ngClass]="themeClass">
 
-    <!-- Header -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-          <h1 class="fw-black netflix-red mb-0">
-            🏪 {{ storeName }}
-          </h1>
-          <button class="btn btn-netflix rounded-pill px-4 fw-bold"
-                  (click)="showCart = !showCart">
-            🛒 Cart
-            <span class="badge bg-white text-danger ms-1">{{ getTotalItems() }}</span>
-          </button>
-        </div>
-        <p class="text-secondary mt-1 mb-0">Fresh products, delivered fast 🚀</p>
-        <hr class="border-secondary">
-      </div>
+  <!-- ════════════════════════════════════
+       ORDER CONFIRMED SCREEN
+  ════════════════════════════════════ -->
+  <div *ngIf="orderConfirmed" class="container py-4 px-3">
+    <div class="text-center mb-3">
+      <div style="font-size:4rem;">🎉</div>
+      <h2 class="fw-black" style="color:var(--accent);">Order Placed!</h2>
+      <p style="color:var(--text-secondary);">Order ID:
+        <span class="badge ms-1" style="background:var(--accent);">#{{ orderId }}</span>
+      </p>
     </div>
 
-    <!-- ORDER CONFIRMED -->
-    <div *ngIf="orderConfirmed" class="row justify-content-center">
-      <div class="col-12 col-md-6">
-        <div class="card bg-card border border-secondary rounded-4 p-4 text-center text-white">
-          <div class="display-1">🎉</div>
-          <h2 class="fw-bold netflix-red mt-2">Order Placed!</h2>
-          <p class="text-secondary">Order ID:
-            <span class="badge bg-danger fs-6 ms-1">#{{ orderId }}</span>
-          </p>
+    <div class="invoice-card">
+      <h6 class="fw-bold mb-3" style="color:var(--accent);">🧾 Invoice</h6>
+      <div *ngFor="let item of cart" class="invoice-row">
+        <span>{{ item.product.emoji }} {{ item.product.name }}
+          <span class="badge ms-1" style="background:var(--accent); font-size:0.7rem;">x{{ item.quantity }}</span>
+        </span>
+        <span style="color:var(--accent); font-weight:800;">₹{{ item.product.price * item.quantity }}</span>
+      </div>
+      <div class="invoice-row" style="border-bottom:none; padding-top:12px;">
+        <span style="font-size:1.1rem; font-weight:800; color:var(--text-primary);">Total</span>
+        <span style="font-size:1.1rem; font-weight:900; color:var(--accent);">₹{{ finalPrice }}</span>
+      </div>
 
-          <div class="card bg-dark border border-secondary rounded-3 p-3 text-start mt-3">
-            <h6 class="fw-bold netflix-red mb-3">🧾 Invoice</h6>
-            <div *ngFor="let item of cart"
-                 class="d-flex justify-content-between py-2 cart-item">
-              <span>
-                {{ item.product.emoji }} {{ item.product.name }}
-                <span class="badge bg-danger ms-1">x{{ item.quantity }}</span>
-              </span>
-              <span class="fw-bold netflix-red">₹{{ item.product.price * item.quantity }}</span>
-            </div>
-            <div class="d-flex justify-content-between pt-3 mt-1 border-top border-secondary">
-              <span class="fs-5 fw-bold text-white">Total</span>
-              <span class="fs-5 fw-bold netflix-red">₹{{ finalPrice }}</span>
-            </div>
-
-            <!-- ✅ UPI QR CODE YAHAN ADD HUA -->
-            <div class="mt-4 text-center">
-              <p class="text-secondary mb-2 fw-semibold">👇 Scan karke payment karo</p>
-              <div class="d-flex justify-content-center">
-                <img [src]="qrCodeUrl"
-                     class="rounded-3 border border-secondary"
-                     width="220" height="220"
-                     alt="UPI QR Code">
-              </div>
-              <div class="alert alert-warning rounded-3 mt-3 py-2 small fw-bold">
-                ⚠️ Exact amount ₹{{ finalPrice }} hi bhejo — tab hi order confirm hoga!
-              </div>
-            </div>
-            <!-- ✅ QR CODE END -->
-
-          </div>
-
-          <button class="btn btn-netflix rounded-pill px-5 py-2 mt-4 fw-bold fs-5"
-                  (click)="resetOrder()">
-            🛍️ Shop Again
-          </button>
+      <!-- UPI QR -->
+      <div class="text-center mt-4">
+        <p style="color:var(--text-secondary); font-weight:600; margin-bottom:8px;">
+          👇 Scan karke payment karo
+        </p>
+        <img [src]="qrCodeUrl" width="200" height="200"
+             style="border-radius:12px; border:2px solid var(--border-color);"
+             alt="UPI QR">
+        <div class="alert alert-warning rounded-3 mt-3 py-2 small fw-bold mb-0">
+          ⚠️ Exact ₹{{ finalPrice }} hi bhejo!
         </div>
       </div>
     </div>
 
-    <!-- MAIN SCREEN -->
-    <div *ngIf="!orderConfirmed">
-
-      <!-- Cart Panel -->
-      <div *ngIf="showCart" class="row justify-content-center mb-4">
-        <div class="col-12 col-md-6">
-
-          <div *ngIf="cart.length === 0"
-               class="alert alert-dark border border-secondary text-center text-white rounded-4">
-            🛒 Cart khali hai! Kuch add karo 😊
-          </div>
-
-          <div *ngIf="cart.length > 0"
-               class="card bg-card border border-secondary rounded-4 p-4 text-white">
-            <h5 class="fw-bold netflix-red mb-3">🛒 Your Cart</h5>
-
-            <div *ngFor="let item of cart"
-                 class="d-flex justify-content-between align-items-center py-2 cart-item">
-              <span class="fw-semibold">
-                {{ item.product.emoji }} {{ item.product.name }}
-              </span>
-              <div class="d-flex align-items-center gap-3">
-                <div class="d-flex align-items-center gap-2">
-                  <button class="qty-btn" (click)="decreaseQty(item)">−</button>
-                  <span class="text-white fw-bold">{{ item.quantity }}</span>
-                  <button class="qty-btn" (click)="increaseQty(item)">+</button>
-                </div>
-                <span class="fw-bold netflix-red">₹{{ item.product.price * item.quantity }}</span>
-                <button class="btn btn-sm btn-outline-danger rounded-circle px-2"
-                        (click)="removeFromCart(item)">✕</button>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top border-secondary">
-              <span class="fs-5 fw-bold text-white">Total</span>
-              <span class="fs-5 fw-bold netflix-red">₹{{ getTotal() }}</span>
-            </div>
-
-            <button class="btn btn-netflix rounded-3 fw-bold fs-5 py-3 mt-3"
-                    (click)="confirmOrder()">
-              ✅ Confirm Order
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product Grid -->
-      <div class="row g-3">
-        <div class="col-6 col-md-4 col-lg-3 col-xl-2"
-             *ngFor="let product of products">
-          <div class="card bg-card border border-secondary rounded-4 text-white h-100 bg-card-hover"
-               (click)="openProduct(product)" style="cursor:pointer;">
-
-            <div class="emoji-box text-center rounded-top-4">
-              {{ product.emoji }}
-            </div>
-
-            <div class="card-body p-3">
-              <h6 class="fw-bold text-white mb-1">{{ product.name }}</h6>
-              <p class="text-secondary small mb-2">{{ product.description }}</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="badge weight-pill rounded-pill">⚖️ {{ product.weight }}</span>
-                <span class="fw-bold netflix-red fs-5">₹{{ product.price }}</span>
-              </div>
-            </div>
-
-            <div class="card-footer bg-transparent border-0 p-3 pt-0">
-              <button class="btn btn-netflix rounded-3 w-100 fw-bold"
-                      (click)="$event.stopPropagation(); addToCart(product)">
-                + Add to Cart
-              </button>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <button class="btn-confirm mt-3" (click)="resetOrder()">🛍️ Shop Again</button>
   </div>
 
-  <!-- Product Detail Modal -->
-  <div *ngIf="selectedProduct"
-       class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-       style="background:rgba(0,0,0,0.85); z-index:1050;"
-       (click)="closeProduct()">
+  <!-- ════════════════════════════════════
+       MAIN APP
+  ════════════════════════════════════ -->
+  <div *ngIf="!orderConfirmed">
 
-    <div class="card bg-card border border-secondary rounded-4 text-white p-4"
-         style="max-width:420px; width:90%;"
-         (click)="$event.stopPropagation()">
-
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="fw-bold netflix-red mb-0">Product Details</h5>
-        <button class="btn btn-sm btn-outline-secondary rounded-circle px-2"
-                (click)="closeProduct()">✕</button>
+    <!-- HEADER -->
+    <div class="app-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <p style="color:var(--text-secondary); font-size:0.75rem; margin:0;">Welcome to</p>
+          <span class="store-title">🏪 {{ storeName }}</span>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <!-- Theme Toggle -->
+          <button class="theme-toggle" (click)="toggleTheme()">
+            {{ isDarkTheme ? '☀️ Light' : '🌙 Dark' }}
+          </button>
+          <!-- Cart -->
+          <button class="cart-btn" (click)="showCart = !showCart; activeTab = 'home'">
+            🛒
+            <span *ngIf="getTotalItems() > 0"
+                  style="position:absolute; top:-6px; right:-6px; background:white;
+                         color:var(--accent); border-radius:50px; font-size:0.7rem;
+                         font-weight:900; padding:1px 6px; min-width:18px; text-align:center;">
+              {{ getTotalItems() }}
+            </span>
+          </button>
+        </div>
       </div>
 
-      <div class="emoji-box text-center rounded-3 mb-3">
+      <!-- Search -->
+      <div class="search-bar">
+        <span style="margin-right:8px; color:var(--text-secondary);">🔍</span>
+        <input type="text"
+               placeholder="Search for products..."
+               [(ngModel)]="searchQuery"
+               (input)="filterProducts()">
+      </div>
+    </div>
+
+    <!-- ── HOME TAB ── -->
+    <div *ngIf="activeTab === 'home'">
+
+      <!-- CART PANEL -->
+      <div *ngIf="showCart" style="padding:12px 16px;">
+        <div *ngIf="cart.length === 0" class="empty-state">
+          <div class="icon">🛒</div>
+          <p>Cart khali hai! Kuch add karo 😊</p>
+        </div>
+
+        <div *ngIf="cart.length > 0" class="cart-panel">
+          <div class="cart-section-title">🛒 Your Cart</div>
+
+          <div *ngFor="let item of cart" class="cart-row">
+            <span style="font-weight:600; font-size:0.9rem; color:var(--text-primary);">
+              {{ item.product.emoji }} {{ item.product.name }}
+            </span>
+            <div class="d-flex align-items-center gap-2">
+              <div class="qty-controls" style="min-width:90px;">
+                <button class="qty-btn" (click)="decreaseQty(item)">−</button>
+                <span class="qty-num">{{ item.quantity }}</span>
+                <button class="qty-btn" (click)="increaseQty(item)">+</button>
+              </div>
+              <span style="color:var(--accent); font-weight:800; min-width:50px; text-align:right;">
+                ₹{{ item.product.price * item.quantity }}
+              </span>
+              <button (click)="removeFromCart(item)"
+                      style="background:transparent; border:1px solid #e53935;
+                             color:#e53935; border-radius:50%; width:26px; height:26px;
+                             font-size:0.7rem; cursor:pointer; display:flex;
+                             align-items:center; justify-content:center;">✕</button>
+            </div>
+          </div>
+
+          <div class="cart-total-row">
+            <span style="font-size:1.1rem; font-weight:800; color:var(--text-primary);">Total</span>
+            <span style="font-size:1.1rem; font-weight:900; color:var(--accent);">₹{{ getTotal() }}</span>
+          </div>
+
+          <button class="btn-confirm" (click)="confirmOrder()">
+            ✅ Confirm Order — ₹{{ getTotal() }}
+          </button>
+        </div>
+      </div>
+
+      <!-- PRODUCTS VIEW -->
+      <div *ngIf="!showCart">
+
+        <!-- OFFER BANNER -->
+        <div class="offer-banner">
+          <h5 style="font-weight:900; margin-bottom:4px;">🔥 Fresh & Healthy</h5>
+          <p style="font-size:0.85rem; opacity:0.8; margin-bottom:10px;">Get 20% Off on all orders today!</p>
+          <span style="background:white; color:var(--accent); border-radius:50px;
+                       padding:6px 16px; font-weight:700; font-size:0.85rem;">
+            Shop Now →
+          </span>
+          <div class="bg-icon">🛒</div>
+        </div>
+
+        <!-- CATEGORIES -->
+        <div class="section-heading">Categories</div>
+        <div class="category-scroll">
+          <div *ngFor="let cat of categories"
+               class="cat-pill"
+               [class.active]="selectedCategory === cat.name"
+               (click)="selectCategory(cat.name)">
+            {{ cat.emoji }} {{ cat.name }}
+          </div>
+        </div>
+
+        <!-- PRODUCT GRID -->
+        <div class="d-flex justify-content-between align-items-center px-3 mt-3 mb-2">
+          <span class="section-heading" style="margin:0; padding:0;">
+            {{ selectedCategory === 'All' ? 'Popular Products' : selectedCategory }}
+          </span>
+          <span style="color:var(--text-secondary); font-size:0.8rem;">
+            {{ filteredProducts.length }} items
+          </span>
+        </div>
+
+        <div *ngIf="filteredProducts.length === 0" class="empty-state">
+          <div class="icon">😔</div>
+          <p>Koi product nahi mila!</p>
+        </div>
+
+        <div class="row g-3 px-3 pb-5 mb-4">
+          <div class="col-6" *ngFor="let product of filteredProducts">
+            <div class="product-card" (click)="openProduct(product)">
+
+              <div class="product-emoji-box position-relative">
+                {{ product.emoji }}
+                <span *ngIf="product.isPopular" class="hot-badge">🔥 Hot</span>
+              </div>
+
+              <div style="padding:10px;">
+                <div class="product-name">{{ product.name }}</div>
+                <div class="product-weight">{{ product.weight }}</div>
+                <div class="product-price">₹{{ product.price }}</div>
+              </div>
+
+              <div style="padding:0 10px 10px;">
+                <button *ngIf="!isInCart(product)"
+                        class="btn-add"
+                        (click)="$event.stopPropagation(); addToCart(product)">
+                  + Add
+                </button>
+                <div *ngIf="isInCart(product)" class="qty-controls"
+                     (click)="$event.stopPropagation()">
+                  <button class="qty-btn" (click)="decreaseQtyByProduct(product)">−</button>
+                  <span class="qty-num">{{ getCartQty(product) }}</span>
+                  <button class="qty-btn" (click)="addToCart(product)">+</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── HISTORY TAB ── -->
+    <div *ngIf="activeTab === 'history'" class="history-section mt-3">
+      <div class="section-heading px-0">📦 Order History</div>
+
+      <div *ngIf="orderHistory.length === 0" class="empty-state">
+        <div class="icon">📭</div>
+        <p>Abhi tak koi order nahi kiya!</p>
+      </div>
+
+      <div *ngFor="let order of orderHistory"
+           class="history-card"
+           (click)="openHistoryOrder(order)">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="history-order-id">#{{ order.orderId }}</div>
+            <div class="history-date">🕐 {{ order.date }}</div>
+            <div class="history-items">
+              {{ order.items.map(i => i.product.emoji + ' ' + i.product.name).join(', ') }}
+            </div>
+          </div>
+          <div class="text-end">
+            <div class="history-total" style="color:var(--accent);">₹{{ order.total }}</div>
+            <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">
+              View →
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM CART BAR -->
+    <div *ngIf="getTotalItems() > 0 && !showCart && activeTab === 'home'" class="bottom-bar">
+      <button class="btn-bottom-cart" (click)="showCart = true">
+        🛒 {{ getTotalItems() }} items — ₹{{ getTotal() }} &nbsp; View Cart →
+      </button>
+    </div>
+
+    <!-- TAB BAR -->
+    <div class="tab-bar" [style.bottom]="getTotalItems() > 0 && !showCart && activeTab === 'home' ? '70px' : '0'">
+      <div class="tab-item" [class.active]="activeTab === 'home'" (click)="activeTab = 'home'; showCart = false">
+        <span>🏠</span>
+        Home
+      </div>
+      <div class="tab-item" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'; showCart = false">
+        <span>📦</span>
+        Orders
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════
+       PRODUCT DETAIL MODAL
+  ════════════════════════════════════ -->
+  <div *ngIf="selectedProduct" class="modal-overlay" (click)="closeProduct()">
+    <div class="modal-sheet" (click)="$event.stopPropagation()">
+      <div class="modal-handle"></div>
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span style="color:var(--accent); font-weight:800;">Product Details</span>
+        <button (click)="closeProduct()"
+                style="background:var(--bg-input); border:1px solid var(--border-color);
+                       border-radius:50%; width:32px; height:32px; cursor:pointer;
+                       color:var(--text-primary); font-size:0.8rem;">✕</button>
+      </div>
+
+      <div class="product-emoji-box rounded-3 mb-3" style="font-size:4rem; padding:24px;">
         {{ selectedProduct.emoji }}
       </div>
 
-      <h4 class="fw-bold text-white">{{ selectedProduct.name }}</h4>
-      <p class="text-secondary">{{ selectedProduct.description }}</p>
+      <h4 style="font-weight:900; color:var(--text-primary);">{{ selectedProduct.name }}</h4>
+      <p style="color:var(--text-secondary);">{{ selectedProduct.description }}</p>
 
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <span class="badge weight-pill rounded-pill fs-6">⚖️ {{ selectedProduct.weight }}</span>
-        <span class="fw-bold netflix-red fs-3">₹{{ selectedProduct.price }}</span>
+        <span style="background:var(--bg-input); color:var(--text-secondary);
+                     border-radius:50px; padding:4px 12px; font-size:0.8rem;
+                     border:1px solid var(--border-color);">
+          ⚖️ {{ selectedProduct.weight }}
+        </span>
+        <span style="color:var(--accent); font-size:1.8rem; font-weight:900;">
+          ₹{{ selectedProduct.price }}
+        </span>
       </div>
 
       <div class="d-flex gap-2">
-        <button class="btn btn-outline-secondary rounded-3 w-50 fw-bold"
-                (click)="closeProduct()">
+        <button (click)="closeProduct()"
+                style="flex:1; background:var(--bg-input); border:1px solid var(--border-color);
+                       border-radius:12px; padding:12px; font-weight:700;
+                       color:var(--text-primary); cursor:pointer;">
           ← Back
         </button>
-        <button class="btn btn-netflix rounded-3 w-50 fw-bold"
+        <button class="btn-add" style="flex:1; border-radius:12px; padding:12px; font-size:1rem;"
                 (click)="addToCartFromModal(selectedProduct)">
           🛒 Add to Cart
         </button>
       </div>
+    </div>
+  </div>
 
+  <!-- ════════════════════════════════════
+       HISTORY INVOICE MODAL
+  ════════════════════════════════════ -->
+  <div *ngIf="selectedHistoryOrder" class="modal-overlay" (click)="closeHistoryOrder()">
+    <div class="modal-sheet" (click)="$event.stopPropagation()">
+      <div class="modal-handle"></div>
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span style="color:var(--accent); font-weight:800; font-size:1.1rem;">
+          🧾 Order #{{ selectedHistoryOrder.orderId }}
+        </span>
+        <button (click)="closeHistoryOrder()"
+                style="background:var(--bg-input); border:1px solid var(--border-color);
+                       border-radius:50%; width:32px; height:32px; cursor:pointer;
+                       color:var(--text-primary); font-size:0.8rem;">✕</button>
+      </div>
+
+      <p style="color:var(--text-secondary); font-size:0.8rem;">🕐 {{ selectedHistoryOrder.date }}</p>
+      <p style="color:var(--text-secondary); font-size:0.8rem;">📍 {{ selectedHistoryOrder.address }}</p>
+
+      <div class="invoice-card">
+        <div *ngFor="let item of selectedHistoryOrder.items" class="invoice-row">
+          <span>{{ item.product.emoji }} {{ item.product.name }}
+            <span class="badge ms-1" style="background:var(--accent); font-size:0.65rem;">
+              x{{ item.quantity }}
+            </span>
+          </span>
+          <span style="color:var(--accent); font-weight:800;">
+            ₹{{ item.product.price * item.quantity }}
+          </span>
+        </div>
+        <div class="invoice-row" style="border-bottom:none; padding-top:12px;">
+          <span style="font-weight:800; color:var(--text-primary);">Total Paid</span>
+          <span style="color:var(--accent); font-weight:900; font-size:1.1rem;">
+            ₹{{ selectedHistoryOrder.total }}
+          </span>
+        </div>
+      </div>
+
+      <button class="btn-confirm mt-3" (click)="closeHistoryOrder()">Close</button>
     </div>
   </div>
 

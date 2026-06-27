@@ -3,6 +3,8 @@ const cors = require('cors'); // 👈 CORS इम्पोर्टेड
 require('dotenv').config();
 const pool = require('./config/db');
 const redisClient = require('./config/redis');
+const ownerRoutes = require('./routes/ownerRoutes');
+
 
 // 1. Route Imports
 const paymentRoutes = require('./routes/paymentRoutes');
@@ -26,6 +28,8 @@ app.use('/catalogs', express.static('public/catalogs'));
 app.use('/api/payments', paymentRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/whatsapp', whatsappRoutes); 
+// मिडिलवेयर के नीचे इसे यूज़ करो
+app.use('/api/owner', ownerRoutes);
 app.use('/api/orders', orderRoutes); // 👈 एंगुलर डैशबोर्ड के लिए नया एंडपॉइंट रजिस्टर किया
 
 app.get('/', (req, res) => {
@@ -54,7 +58,7 @@ app.listen(PORT, () => {
             if (!baseRoute.startsWith('/')) baseRoute = '/' + baseRoute;
             console.log(`   -> [${Object.keys(si.route.methods).join(',').toUpperCase()}] ${baseRoute}${si.route.path}`);
           }
-        });
+        })
       }
     });
   }

@@ -1,0 +1,116 @@
+<div class="p-6 bg-[#F7F8FA] min-h-screen font-sans">
+  
+  <div class="mb-6 flex justify-between items-center">
+    <div>
+      <h2 class="text-2xl font-bold text-[#1A1A1A]">Inventory Management</h2>
+      <p class="text-sm text-gray-500">Add or remove items from Apni Dukan</p>
+    </div>
+    <a href="/owner/dashboard" class="text-sm font-bold text-[#4A7C59]">← Back to Dashboard</a>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 h-fit">
+      <h3 class="text-lg font-bold text-[#1A1A1A] mb-4">➕ Add New Item</h3>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">PRODUCT NAME</label>
+          <input type="text" #nameInput placeholder="Fresh Spinach" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none text-sm focus:border-[#4A7C59]" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-1">PRICE (₹)</label>
+            <input type="number" #priceInput placeholder="40" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none text-sm focus:border-[#4A7C59]" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-1">WEIGHT / UNIT</label>
+            <input type="text" #weightInput placeholder="1 kg" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none text-sm focus:border-[#4A7C59]" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-1">STOCK QTY</label>
+            <input type="number" #stockInput placeholder="50" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none text-sm focus:border-[#4A7C59]" />
+          </div>
+          
+          <div>
+            <label class="block text-xs font-bold text-gray-500 mb-1">CATEGORY</label>
+            <input type="hidden" #categoryInput value="Veggies" />
+            <div class="flex flex-wrap gap-1.5 mt-1">
+              <button type="button" (click)="categoryInput.value='Fruits'" [class.bg-[#4A7C59]]="categoryInput.value==='Fruits'" [class.text-white]="categoryInput.value==='Fruits'" class="px-2.5 py-1.5 text-[11px] font-bold bg-gray-100 rounded-lg transition-all">Fruits</button>
+              <button type="button" (click)="categoryInput.value='Veggies'" [class.bg-[#4A7C59]]="categoryInput.value==='Veggies'" [class.text-white]="categoryInput.value==='Veggies'" class="px-2.5 py-1.5 text-[11px] font-bold bg-[#4A7C59] text-white rounded-lg transition-all">Veggies</button>
+              <button type="button" (click)="categoryInput.value='Dairy'" [class.bg-[#4A7C59]]="categoryInput.value==='Dairy'" [class.text-white]="categoryInput.value==='Dairy'" class="px-2.5 py-1.5 text-[11px] font-bold bg-gray-100 rounded-lg transition-all">Dairy</button>
+              <button type="button" (click)="categoryInput.value='Snacks'" [class.bg-[#4A7C59]]="categoryInput.value==='Snacks'" [class.text-white]="categoryInput.value==='Snacks'" class="px-2.5 py-1.5 text-[11px] font-bold bg-gray-100 rounded-lg transition-all">Snacks</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 mb-1">IMAGE URL</label>
+          <input type="text" #imageInput placeholder="assets/images/spinach.png" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none text-sm focus:border-[#4A7C59]" />
+        </div>
+
+        <button (click)="addProduct(nameInput.value, priceInput.value, weightInput.value, stockInput.value, categoryInput.value, imageInput.value); nameInput.value=''; priceInput.value=''; weightInput.value=''; stockInput.value='';" 
+                class="w-full bg-[#4A7C59] hover:bg-[#3B6347] text-white font-bold py-3.5 rounded-xl transition-all shadow-md mt-2 text-sm">
+          Save Product to DB
+        </button>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+      <h3 class="text-lg font-bold text-[#1A1A1A] mb-4">📦 Current Stock ({{ productsList ? productsList.length : 0 }} items)</h3>
+
+      <div *ngIf="isLoading" class="text-center py-8 text-gray-400">
+        Loading inventory...
+      </div>
+
+      <div *ngIf="!isLoading && (!productsList || productsList.length === 0)" class="text-center py-8 text-gray-400">
+        No products found in database. Add some!
+      </div>
+
+      <div class="overflow-x-auto" *ngIf="!isLoading && productsList && productsList.length > 0">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
+              <th class="pb-3">Item</th>
+              <th class="pb-3">Category</th>
+              <th class="pb-3">Price</th>
+              <th class="pb-3">Stock</th>
+              <th class="pb-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50 text-sm">
+            <tr *ngFor="let prod of productsList" class="hover:bg-gray-50/50 transition-all">
+              <td class="py-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden">
+                  <img [src]="prod.image_url ? prod.image_url : 'assets/images/placeholder.png'" class="max-h-full object-contain" alt="product image" />
+                </div>
+                <div>
+                  <span class="font-bold text-[#1A1A1A] block">{{ prod.name }}</span>
+                  <span class="text-xs text-gray-400">{{ prod.weight }}</span>
+                </div>
+              </td>
+              <td class="py-4 text-gray-500">{{ prod.category }}</td>
+              <td class="py-4 font-bold text-[#1A1A1A]">₹{{ prod.price }}</td>
+              <td class="py-4">
+                <span [ngClass]="(prod.stock <= 5) ? 'bg-red-50 text-red-600 border-red-200' : 'bg-green-50 text-green-700 border-green-200'" class="px-2.5 py-1 rounded-md text-xs font-bold border">
+                  {{ prod.stock }} left
+                </span>
+              </td>
+              <td class="py-4 text-right">
+                <button (click)="deleteProduct(prod.id)" class="text-red-500 hover:text-red-700 font-bold text-xs bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl transition-all">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+</div>
